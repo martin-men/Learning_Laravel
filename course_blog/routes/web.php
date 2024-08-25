@@ -2,10 +2,13 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Models\Post;
+use Illuminate\Support\Facades\File;
 
 Route::get('/', function () {
+
     $posts = Post::all(); // Find all posts and pass them to the view called "posts"
     return view('posts', ['posts' => $posts]);
+
 });
 
 Route::get('post/{post}', function ($slug) { // En Laravel, al colocar {algo entre llaves} se está indicando que se espera un parámetro (wildcard)
