@@ -2,66 +2,37 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Support\Facades\File;
-use Spatie\YamlFrontMatter\YamlFrontMatter;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
-class Post
+class Post extends Model
 {
+    
+    use HasFactory;
 
-    public $title;
-    public $excerpt;
-    public $date;
-    public $body;
-    public $slug;
+    // Se usa para determinar que campos se pueden llenar por medio de ::create([])
+    // protected $fillable = ['title', 'excerpt', 'body'];
 
-    public function __construct($title, $excerpt, $date, $body, $slug)
+    // Se usa para determinar que campos no se pueden llenar por medio de ::create([])
+    // protected $guarded = ['id'];
+
+    // Se usa para habilitar todos los campos para la inserción masiva
+    protected $guarded = [];
+
+    /* Eloquent relationship */
+    /*
+        A esta función se la utiliza como si fuese un atributo
+        Laravel se encarga de buscar la relación, solo es necesario especificar a qué modelo pertenece
+        Supongo que el nombre de uno de los atributos del modelo Post debe tener una palabra clave con relación al modelo Category
+    */
+    public function category()
     {
-        $this->title = $title;
-        $this->excerpt = $excerpt;
-        $this->date = $date;
-        $this->body = $body;
-        $this->slug = $slug;
+        // hasOne, hasMany, belongsTo, belongsToMany
+        return $this->belongsTo(Category::class);
     }
 
-    public static function find($slug)
-    {
-
-        return static::all()->firstWhere('slug', $slug);
-
-        // INITIAL APPROACH
-
-        // $path = "../resources/posts/{$slug}.html";
-
-        // if (!file_exists($path)) {
-        //     // dd('File does not exist!'); // dd() es un helper de Laravel que detiene la ejecución del código y muestra el contenido de la variable
-        //     // abort(404); // abort() es un helper de Laravel que detiene la ejecución del código y muestra un error 404 (en este caso)
-        //     throw new ModelNotFoundException(); // ModelNotFoundException() es una excepción de Laravel que se lanza cuando no se encuentra un modelo
-        // }
-
-        // return cache()->remember(
-        //     "post.{$slug}",
-        //     now()->addMinutes(20),
-        //     fn() => file_get_contents($path) // cache() es un helper de Laravel que permite almacenar en caché el contenido de un archivo por cierto tiempo
-        // );
-
+    public function user() {
+        return $this->belongsTo(User::class);
     }
 
-    public static function all()
-    {
-
-        return cache()->rememberForever('posts.all', function () {
-            return collect(File::files(resource_path('posts')))->map(function ($file) {
-                $document = YamlFrontMatter::parse(file_get_contents($file));
-                return new Post(
-                    $document->title,
-                    $document->excerpt,
-                    $document->date,
-                    $document->body(),
-                    $document->slug
-                );
-            })->sortByDesc('date');
-        });
-
-    }
 }
