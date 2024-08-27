@@ -10,6 +10,9 @@ class Post extends Model
     
     use HasFactory;
 
+    /* For eager loading by default, use with (this will load the category and author instances for each corresponding post) */
+    // protected $with = ['category', 'author'];
+
     // Se usa para determinar que campos se pueden llenar por medio de ::create([])
     // protected $fillable = ['title', 'excerpt', 'body'];
 
@@ -31,8 +34,8 @@ class Post extends Model
         return $this->belongsTo(Category::class);
     }
 
-    public function user() {
-        return $this->belongsTo(User::class);
+    public function author() {
+        return $this->belongsTo(User::class, 'user_id');
     }
 
 }
