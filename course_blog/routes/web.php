@@ -18,9 +18,12 @@ Route::get('/', function () {
     // $posts = Post::without('category', 'author')->get(); // Find all posts but without the user and category related
 
     //$posts = Post::all(); // Find all posts and pass them to the view called "posts"
-    return view('posts', ['posts' => $posts]);
+    return view('posts', [
+        'posts' => $posts,
+        'categories' => Category::all()
+    ]);
 
-});
+})->name('home');
 
 // Route::get('post/{post}', function ($slug) { // En Laravel, al colocar {algo entre llaves} se está indicando que se espera un parámetro (wildcard)
     
@@ -54,9 +57,20 @@ Route::get('posts/{post:slug}', function (Post $post) {
 });
 
 Route::get('categories/{category:slug}', function (Category $category) {
-    return view('posts', ['posts' => $category->posts->load(['category', 'author'])]);
-});
+
+    return view('posts', [
+        'posts' => $category->posts->load(['category', 'author']),
+        'categories' => Category::all(),
+        'currentCategory' => $category
+    ]);
+
+})->name('category');
 
 Route::get('authors/{author:username}', function (User $author) {
-    return view('posts', ['posts' => $author->posts->load(['category', 'author'])]);
+
+    return view('posts', [
+        'posts' => $author->posts->load(['category', 'author']),
+        'categories' => Category::all()
+    ]);
+
 });
