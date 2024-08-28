@@ -38,4 +38,16 @@ class Post extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
 
+    /* QUERY SCOPES */
+    // Query is automatically passed by Laravel
+    public function scopeFilter($query, array $filters) // Post::filter()
+    {
+        $query->when($filters['search'] ?? false, fn ($query, $search) =>
+            // Here I continue creating the sql query if the user is searching for something (to filter)
+            $query
+                ->where('title', 'like', '%' . $search . '%')
+                ->orWhere('body', 'like', '%' . $search . '%')
+        );
+    }
+
 }
