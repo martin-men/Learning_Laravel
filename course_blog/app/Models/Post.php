@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Post extends Model
 {
-    
+
     use HasFactory;
 
     /* For eager loading by default, use with (this will load the category and author instances for each corresponding post) */
@@ -28,25 +28,35 @@ class Post extends Model
         Laravel se encarga de buscar la relación, solo es necesario especificar a qué modelo pertenece
         Supongo que el nombre de uno de los atributos del modelo Post debe tener una palabra clave con relación al modelo Category
     */
-    public function category()
+    public function category(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         // hasOne, hasMany, belongsTo, belongsToMany
         return $this->belongsTo(Category::class);
     }
 
-    public function author() {
+    public function author(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
         return $this->belongsTo(User::class, 'user_id');
     }
 
     /* QUERY SCOPES */
     // Query is automatically passed by Laravel
-    public function scopeFilter($query, array $filters) // Post::filter()
+    public function scopeFilter($query, array $filters): void // Post::filter()
     {
-        $query->when($filters['search'] ?? false, fn ($query, $search) =>
-            // Here I continue creating the sql query if the user is searching for something (to filter)
-            $query
-                ->where('title', 'like', '%' . $search . '%')
-                ->orWhere('body', 'like', '%' . $search . '%')
+        $query->when($filters['search'] ?? false, fn($query, $search) => // Here I continue creating the sql query if the user is searching for something (to filter)
+        $query
+            ->where('title', 'like', '%' . $search . '%')
+            ->orWhere('body', 'like', '%' . $search . '%')
+        );
+/*        $query->when($filters['category'] ?? false, fn($query, $category) => $query
+            ->whereExists(fn($query) => $query->from('categories')
+                ->whereColumn('categories.id', 'posts.category_id') // When we want to evaluate a column and not a specific value
+                ->where('categories.slug', $category)
+            )
+        );*/
+        $query->when($filters['category'] ?? false, fn($query, $category) =>
+        $query->whereHas('category', fn($query) =>
+            $query->where('slug', $category))
         );
     }
 

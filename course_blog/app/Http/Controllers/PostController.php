@@ -8,7 +8,7 @@ use App\Models\Category;
 
 class PostController extends Controller
 {
-    public function index()
+    public function index(): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Foundation\Application
     {
         // Find all posts but also all categories related te the found posts (this solves the N+1 problem)
         // The N+1 problem is when you have a query that fetches a collection of models and then for each model you fetch a related model
@@ -25,12 +25,13 @@ class PostController extends Controller
         // Here I execute the sql query with ->get() and pass the result to the view called "posts"
         // For search, I also execute the query scope ->filter() defined in the Post eloquent model
         return view('posts', [
-            'posts' => $posts->filter(request(['search']))->get(),
-            'categories' => Category::all()
+            'posts' => $posts->filter(request(['search', 'category']))->get(),
+            'categories' => Category::all(),
+            'currentCategory' => Category::firstWhere('slug', request('category'))
         ]);
     }
 
-    public function show(Post $post)
+    public function show(Post $post): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Foundation\Application
     {
         return view('post', ['post' => $post]);
     }
