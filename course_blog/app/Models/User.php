@@ -16,11 +16,7 @@ class User extends Authenticatable
      *
      * @var array<int, string>
      */
-    protected $fillable = [
-        'name',
-        'email',
-        'password',
-    ];
+    protected $guarded = [];
 
     /**
      * The attributes that should be hidden for serialization.
@@ -45,7 +41,21 @@ class User extends Authenticatable
         ];
     }
 
-    public function posts() {
+    // Inverse of mutators are Accessors
+    // syntax = get + (attribute name) + Attribute
+    public function getNameAttribute($name): string
+    {
+        return ucwords($name);
+    }
+
+    // Eloquent mutator syntax: set + (attribute name) + Attribute
+    public function setPasswordAttribute($password): void
+    {
+        $this->attributes['password'] = bcrypt($password);
+    }
+
+    public function posts(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
         return $this->hasMany(Post::class);
     }
 }
