@@ -43,21 +43,34 @@ class Post extends Model
     // Query is automatically passed by Laravel
     public function scopeFilter($query, array $filters): void // Post::filter()
     {
-        $query->when($filters['search'] ?? false, fn($query, $search) => // Here I continue creating the sql query if the user is searching for something (to filter)
-        $query
-            ->where('title', 'like', '%' . $search . '%')
-            ->orWhere('body', 'like', '%' . $search . '%')
+        $query->when(
+            $filters['search'] ?? false,
+            fn($query, $search) => // Here I continue creating the sql query if the user is searching for something (to filter)
+                $query->where(
+                    fn($query) =>
+                        $query->where('title', 'like', '%' . $search . '%')
+                              ->orWhere('body', 'like', '%' . $search . '%')
+            )
         );
-/*        $query->when($filters['category'] ?? false, fn($query, $category) => $query
+        /*        $query->when($filters['category'] ?? false, fn($query, $category) => $query
             ->whereExists(fn($query) => $query->from('categories')
                 ->whereColumn('categories.id', 'posts.category_id') // When we want to evaluate a column and not a specific value
                 ->where('categories.slug', $category)
             )
         );*/
-        $query->when($filters['category'] ?? false, fn($query, $category) =>
-        $query->whereHas('category', fn($query) =>
+
+        $query->when(
+            $filters['category'] ?? false,
+            fn($query, $category) =>
+            $query->whereHas('category', fn($query) =>
             $query->where('slug', $category))
         );
-    }
 
+        $query->when(
+            $filters['author'] ?? false,
+            fn($query, $author) =>
+            $query->whereHas('author', fn($query) =>
+            $query->where('username', $author))
+        );
+    }
 }

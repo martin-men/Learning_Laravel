@@ -29,11 +29,14 @@
         "_" antes del nombre es una convención para indicar que es un archivo parcial
         Partials son archivos que contienen solo una parte de la vista y pueden acceder a variables de la vista principal
         Compononents son archivos que contienen una parte de la vista y una lógica aislada propia --}}
-        @include('_posts-header')
+        @include('posts._header')
 
         <main class="max-w-6xl mx-auto mt-6 lg:mt-20 space-y-6">
             @if ($posts->count() > 0)
                 <x-posts-grid :posts="$posts" />
+
+                {{-- This is available when you use ->paginate() instead of ->get() (look at the posts controller) --}}
+                {{ $posts->links() }}
             @else
                 <p class="text-center">No posts yet. Please check back later.</p>
             @endif

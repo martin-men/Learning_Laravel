@@ -24,15 +24,19 @@ class PostController extends Controller
 
         // Here I execute the sql query with ->get() and pass the result to the view called "posts"
         // For search, I also execute the query scope ->filter() defined in the Post eloquent model
-        return view('posts', [
-            'posts' => $posts->filter(request(['search', 'category']))->get(),
-            'categories' => Category::all(),
-            'currentCategory' => Category::firstWhere('slug', request('category'))
+        return view('posts.index', [
+            // 'posts' => $posts->filter(request(['search', 'category', 'author']))->get()
+
+            /* THIS IS FOR AUTOMATIC PAGINATION */
+            'posts' => $posts->filter(request(['search', 'category', 'author']))
+                ->paginate(6)
+                ->withQueryString()
+
         ]);
     }
 
     public function show(Post $post): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Foundation\Application
     {
-        return view('post', ['post' => $post]);
+        return view('posts.show', ['post' => $post]);
     }
 }
