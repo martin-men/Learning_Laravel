@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Category;
+use App\Models\Comment;
 use App\Models\User;
 use App\Models\Post;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -15,12 +16,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-
-        User::truncate();
-        Category::truncate();
-        Post::truncate();
-
-        /* WITH FACTORIES */            
+        /* WITH FACTORIES */
         /*      Random data except for what is specified, if nothing is specified, everything is random */
         $firstUser = User::factory()->create([
             'name' => 'John Doe'
@@ -29,12 +25,20 @@ class DatabaseSeeder extends Seeder
         $secondUser = User::factory()->create([
             'name' => 'Malena Bustillos'
         ]);
-        
+
         Post::factory(5)->create([
             'user_id' => $firstUser->id
         ]);
 
         Post::factory(3)->create([
+            'user_id' => $secondUser->id
+        ]);
+
+        Comment::factory(10)->create([
+            'user_id' => $firstUser->id
+        ]);
+
+        Comment::factory(10)->create([
             'user_id' => $secondUser->id
         ]);
 

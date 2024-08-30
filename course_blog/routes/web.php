@@ -1,12 +1,18 @@
 <?php
 
+use App\Http\Controllers\NewsletterController;
+use App\Http\Controllers\PostCommentsController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\SessionsController;
+use App\services\MailchimpNewsletter;
 use Illuminate\Support\Facades\Route;
 use App\Models\Post;
 use App\Models\Category;
 use App\Models\User;
 use App\Http\Controllers\PostController;
+
+// Single action controller
+Route::post('newsletter', NewsletterController::class);
 
 Route::get('/', [PostController::class, 'index'])->name('home');
 
@@ -37,6 +43,8 @@ Route::get('/', [PostController::class, 'index'])->name('home');
 /* Mapear un valor de un atributo único cualquiera de un post a un objeto POST */
 Route::get('posts/{post:slug}', [PostController::class, 'show']);
 
+Route::post('posts/{post:slug}/comments', [PostCommentsController::class, 'store']);
+
 /* NO LONGER NECESSARY, WE ARE PASSING A CATEGORY AS AN ATTRIBUTE IN THE LINK TO HOME */
 /*Route::get('categories/{category:slug}', function (Category $category) {
 
@@ -66,3 +74,5 @@ Route::post("/logout", [SessionsController::class, 'destroy'])->middleware('auth
 Route::get("/login", [SessionsController::class, 'create'])->middleware('guest');
 
 Route::post("/login", [SessionsController::class, 'store'])->middleware('guest');
+
+Route::get('admin/post/create', [PostController::class, 'create']);
