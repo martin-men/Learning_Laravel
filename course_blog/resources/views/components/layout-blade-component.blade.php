@@ -62,7 +62,7 @@
                         <input id="email" name="email" type="text" placeholder="Your email address"
                                class="lg:bg-transparent py-2 lg:py-0 pl-4 focus-within:outline-none">
                         @error('email')
-                            <span class="text-xs text-red">{{ $message }}</span>
+                            <span class="text-xs text-red-800">{{ $message }}</span>
                         @enderror
                     </div>
 

@@ -3,13 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\services\MailchimpNewsletter;
+use App\services\Newsletter;
 use Illuminate\Http\Request;
 
 class NewsletterController extends Controller
 {
     // Laravel can automatically instantiate an object from a class if the syntax is the following
-    public function __invoke(MailchimpNewsletter $newsletter): \Illuminate\Foundation\Application|\Illuminate\Routing\Redirector|\Illuminate\Http\RedirectResponse
+    public function __invoke(Newsletter $newsletter): \Illuminate\Foundation\Application|\Illuminate\Routing\Redirector|\Illuminate\Http\RedirectResponse
     {
         request()->validate(['email' => 'required|email']);
 

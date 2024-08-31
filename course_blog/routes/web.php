@@ -11,6 +11,8 @@ use App\Models\Category;
 use App\Models\User;
 use App\Http\Controllers\PostController;
 
+
+
 // Single action controller
 Route::post('newsletter', NewsletterController::class);
 
@@ -38,7 +40,6 @@ Route::get('/', [PostController::class, 'index'])->name('home');
 //     return view('post', ['post' => $post]);
 
 // });
-
 
 /* Mapear un valor de un atributo único cualquiera de un post a un objeto POST */
 Route::get('posts/{post:slug}', [PostController::class, 'show']);
