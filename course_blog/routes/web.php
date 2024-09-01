@@ -10,8 +10,8 @@ use App\Models\Post;
 use App\Models\Category;
 use App\Models\User;
 use App\Http\Controllers\PostController;
-
-
+use App\Http\Middleware\MustBeAdministrator;
+use App\Http\Controllers\AdminPostController;
 
 // Single action controller
 Route::post('newsletter', NewsletterController::class);
@@ -76,4 +76,17 @@ Route::get("/login", [SessionsController::class, 'create'])->middleware('guest')
 
 Route::post("/login", [SessionsController::class, 'store'])->middleware('guest');
 
-Route::get('admin/post/create', [PostController::class, 'create']);
+Route::get('admin/posts/create', [AdminPostController::class, 'create'])->middleware(MustBeAdministrator::class);
+
+Route::post('admin/posts', [AdminPostController::class, 'store'])->middleware(MustBeAdministrator::class);
+
+Route::get('admin/posts', [AdminPostController::class, 'index'])->middleware('can:admin');
+
+/* Es posible agrupar rutas que usen un mismo middleware */
+Route::middleware(MustBeAdministrator::class)->group(function() {
+    Route::get('admin/posts/{post}/edit', [AdminPostController::class, 'edit']);
+    Route::patch('admin/posts/{post}', [AdminPostController::class, 'update']);
+});
+
+/* It is possible to use a GATE definition at the AppServiceProvider as a middleware like this */
+Route::delete('admin/posts/{post}', [AdminPostController::class, 'destroy'])->middleware('can:admin');

@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Post;
-use App\Models\Category;
 
 class PostController extends Controller
 {
@@ -38,10 +37,5 @@ class PostController extends Controller
     public function show(Post $post): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Foundation\Application
     {
         return view('posts.show', ['post' => $post]);
-    }
-
-    public function create()
-    {
-        return view('posts.create');
     }
 }

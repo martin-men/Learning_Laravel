@@ -15,7 +15,7 @@ class MustBeAdministrator
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (auth()->user()?->username !== 'martin-men') {
+        if(request()->user()?->cannot('admin')) {
             abort(403);
         }
         return $next($request);
